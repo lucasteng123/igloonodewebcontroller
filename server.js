@@ -2,11 +2,12 @@
 var connect = require('connect');
 var http = require('http');
 var osc = require('node-osc');
+var fs = require("fs");
 
 //port declarations
-var warpServerIP = '127.0.0.1';
-var warpServerPort = 9001;
-var httpServerPort = 3000;
+
+//JSON imports
+var settings = require("./content/json/settings");
 
 //instantiate connect object
 var app = connect();
@@ -14,7 +15,7 @@ var app = connect();
 //testing of OSC
 app.use('/oscTest', function(req, res, next){
 	//send test message to server
-	var client = new osc.Client(warpServerIP,warpServerPort);
+	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
 	client.send('/testOSC',150,function(){
 		//clean up client object
 		client.kill();
@@ -24,12 +25,9 @@ app.use('/oscTest', function(req, res, next){
 	res.end("osc sent successfully");
 
 });
-
-
-
 //endpoint to change server ip
 app.use('/setServerIp', function(req,res,next){
-
+	 
 });
 
 //endpoint to change server port
@@ -48,8 +46,8 @@ app.use(function onerror(err,req,res,next){
 });
 
 //startup logging
-http.createServer(app).listen(httpServerPort);
-console.log("http server started at port " + httpServerPort); 
-console.log("OSC sending to " + warpServerIP + ":" + warpServerPort);
+http.createServer(app).listen(settings.httpServerPort);
+console.log("http server started at port " + settings.httpServerPort); 
+console.log("OSC sending to " + settings.warpServerIP + ":" + settings.warpServerPort);
 
 //lucas
