@@ -25,15 +25,6 @@ app.use('/oscTest', function(req, res, next){
 	res.end("osc sent successfully");
 
 });
-//endpoint to change server ip
-app.use('/setServerIp', function(req,res,next){
-	 
-});
-
-//endpoint to change server port
-app.use('/setServerPort', function(req,res,next){
-
-});
 
 //generic response
 app.use(function(req,res){
