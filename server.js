@@ -1,8 +1,9 @@
 //packages
-var connect = require('connect');
+var express = require('express');
 var http = require('http');
 var osc = require('node-osc');
 var fs = require("fs");
+var bodyParser = require('body-parser');
 
 //port declarations
 
@@ -10,7 +11,7 @@ var fs = require("fs");
 var settings = require("./content/json/settings");
 
 //instantiate connect object
-var app = connect();
+var app = express();
 
 //testing of OSC
 app.use('/oscTest', function(req, res, next){
@@ -25,6 +26,8 @@ app.use('/oscTest', function(req, res, next){
 	res.end("osc sent successfully");
 
 });
+
+
 
 //generic response
 app.use(function(req,res){
