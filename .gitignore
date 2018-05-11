@@ -58,3 +58,5 @@ typings/
 .env
 
 .vscode
+content/mediaFiles/*
+content/images/*

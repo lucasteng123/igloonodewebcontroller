@@ -1,17 +1,44 @@
+"use strict";
 //packages
 var express = require('express');
 var http = require('http');
 var osc = require('node-osc');
 var fs = require("fs");
 var bodyParser = require('body-parser');
+var util = require('util');
+var debug = true;
 
-//port declarations
+//globals
 
 //JSON imports
 var settings = require("./content/json/settings");
+var content = require("./content/json/media.json");
 
 //instantiate connect object
 var app = express();
+
+class Content{
+	constructor(contentFolder,imagesFolder){
+
+		// this._contentFolder = "./content/mediaFiles";
+		// this._imagesFolder = "./content/images";
+		this._contentFolder = contentFolder;
+		this._imagesFolder = imagesFolder;
+		console.log("Loading Files");
+		this.videos = [];
+		fs.readdirSync(this._contentFolder).forEach(file => {
+			this.videos.push(file); 
+			console.log(file);
+		});
+		if(this.videos == null){
+			console.log("Error: No Files Found");
+			exit();
+		}
+
+	}
+}
+
+var content = new Content(settings.mediaFiles,settings.imagesFolder);
 
 //testing of OSC
 app.use('/oscTest', function(req, res, next){
@@ -38,6 +65,8 @@ app.use(function(req,res){
 app.use(function onerror(err,req,res,next){
 	throw err;
 });
+
+
 
 //startup logging
 http.createServer(app).listen(settings.httpServerPort);

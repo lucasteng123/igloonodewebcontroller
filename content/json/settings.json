@@ -1,5 +1,7 @@
 {
     "warpServerIP":"127.0.0.1",
     "warpServerPort":9001,
-    "httpServerPort":3000
+    "httpServerPort":3000,
+    "mediaFiles":"./content/mediaFiles",
+    "imagesFolder":"./content/images"
 }
