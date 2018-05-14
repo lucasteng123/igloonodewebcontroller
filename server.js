@@ -6,20 +6,29 @@ var osc = require('node-osc');
 var fs = require("fs");
 var bodyParser = require('body-parser');
 var util = require('util');
+var microdb = require('nodejs-microdb');
+var ffmpeg = require('ffmpeg');
+var jimp = require('jimp');
+
+
 var debug = true;
+
 
 //globals
 
 //JSON imports
 var settings = require("./content/json/settings");
-var content = require("./content/json/media.json");
+
 
 //instantiate connect object
 var app = express();
 
+//create database
+
+var content = new microdb({'file':'./content/contentStore.db'});
+
 class Content{
 	constructor(contentFolder,imagesFolder){
-
 		// this._contentFolder = "./content/mediaFiles";
 		// this._imagesFolder = "./content/images";
 		this._contentFolder = contentFolder;
@@ -27,7 +36,29 @@ class Content{
 		console.log("Loading Files");
 		this.videos = [];
 		fs.readdirSync(this._contentFolder).forEach(file => {
-			this.videos.push(file); 
+			var response = content.find("mediaFile",file);
+			if(response == false){
+				console.log("New Content");
+					var newProcessFile = new ffmpeg("./content/mediaFiles/"+ file);
+					newProcessFile.then(function (video){
+						
+						video.fnExtractFrameToJPG("./content/images/temp",{
+							number:1,
+							size:'1000x?',
+							every_n_percentage:10,
+
+						},function (error, files) {
+							if (!error)
+								console.log('Frames: ' + files);
+						});
+
+					}, function (err) {
+						console.log('Error: ' + err);
+					});
+
+			} else {
+				console.log(response);
+			}
 			console.log(file);
 		});
 		if(this.videos == null){
@@ -65,9 +96,6 @@ app.use(function(req,res){
 app.use(function onerror(err,req,res,next){
 	throw err;
 });
-
-
-
 //startup logging
 http.createServer(app).listen(settings.httpServerPort);
 console.log("http server started at port " + settings.httpServerPort); 
