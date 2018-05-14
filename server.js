@@ -4,9 +4,9 @@ var express = require('express');
 var http = require('http');
 var osc = require('node-osc');
 var fs = require("fs");
+var path = require("path");
 var bodyParser = require('body-parser');
 var util = require('util');
-var microdb = require('nodejs-microdb');
 var ffmpeg = require('ffmpeg');
 var jimp = require('jimp');
 
@@ -25,7 +25,7 @@ var app = express();
 
 //create database
 
-var content = new microdb({'file':'./content/contentStore.db'});
+var contentDB = new microdb({'file':'./content/contentStore.db'});
 
 class Content{
 	constructor(contentFolder,imagesFolder){
@@ -34,38 +34,38 @@ class Content{
 		this._contentFolder = contentFolder;
 		this._imagesFolder = imagesFolder;
 		console.log("Loading Files");
-		this.videos = [];
-		fs.readdirSync(this._contentFolder).forEach(file => {
-			var response = content.find("mediaFile",file);
+		fs.readdirSync(this._contentFolder).forEach(videoFile => {
+			console.log(response);
 			if(response == false){
 				console.log("New Content");
-					var newProcessFile = new ffmpeg("./content/mediaFiles/"+ file);
-					newProcessFile.then(function (video){
-						
-						video.fnExtractFrameToJPG("./content/images/temp",{
+				var imgfld = this._imagesFolder;
+					var newProcessFile = new ffmpeg(this._contentFolder+"/"+ videoFile);
+					newProcessFile.then(function (video){			
+						video.fnExtractFrameToJPG(imgfld+"/temp",{
 							number:1,
 							size:'1000x?',
 							every_n_percentage:10,
-
 						},function (error, files) {
 							if (!error)
-								console.log('Frames: ' + files);
+								console.log('ffmpeg: ' + files);
+								var imgfilename = path.basename(files);
+								jimp.read(imgfld+"/temp/"+imgfilename,function(err,img){
+									if(err) throw err;
+									img.cover(200,200,jimp.HORIZONTAL_ALIGN_CENTER|jimp.VERTICAL_ALIGN_MIDDLE)
+									   .quality(100)
+									   .write(imgfld+"/"+imgfilename);
+									console.log("Cropped: "+imgfld+"/"+imgfilename);
+									fs.unlink(imgfld+"/temp/"+imgfilename);
+									var tempjson = {};
+								});
 						});
-
 					}, function (err) {
 						console.log('Error: ' + err);
 					});
-
 			} else {
 				console.log(response);
 			}
-			console.log(file);
 		});
-		if(this.videos == null){
-			console.log("Error: No Files Found");
-			exit();
-		}
-
 	}
 }
 
