@@ -1,17 +1,20 @@
 "use strict";
 //packages
+//html
 var express = require('express');
 var http = require('http');
+var bodyParser = require('body-parser');
+//communication
 var osc = require('node-osc');
+//file utilities
 var fs = require("fs");
 var path = require("path");
-var bodyParser = require('body-parser');
+
 var util = require('util');
+
+//image manipulation
 var ffmpeg = require('ffmpeg');
 var jimp = require('jimp');
-
-
-var debug = true;
 
 
 //globals
@@ -25,7 +28,6 @@ var app = express();
 
 //create database
 
-var contentDB = new microdb({'file':'./content/contentStore.db'});
 
 class Content{
 	constructor(contentFolder,imagesFolder){
