@@ -3,5 +3,17 @@
     "warpServerPort":9001,
     "httpServerPort":3000,
     "mediaFiles":"./content/mediaFiles",
-    "imagesFolder":"./content/images"
+    "imagesFolder":"./content/images",
+    "contentMode":0, //1=folder mode, 0=preset mode,
+    "videoContent":[
+        {
+            "videoName":"LogoLoop.mp4",
+            "thumbnail":"LogoLoop.jpg"
+        },
+        {
+            "videoName":"LogoLoop2.mp4",
+            "thumbnail":"LogoLoop2.jpg"
+        }
+
+    ]
 }
