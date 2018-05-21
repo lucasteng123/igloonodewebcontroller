@@ -11,7 +11,10 @@ var fs = require("fs");
 var path = require("path");
 
 var util = require('util');
-var csv = require('csv');
+
+var gamingContent = false;
+
+
 
 //image manipulation
 var ffmpeg = require('ffmpeg');
@@ -25,17 +28,22 @@ var settings = require("./content/json/settings");
 //instantiate connect object
 var app = express();
 
-//create csv store
-
+/*
+todo
+websocket
+look up osc paths
+UI
+*/
 
 
 
 class Content {
-	constructor(contentFolder, imagesFolder, contentMode, content) {
+	constructor(contentFolder, imagesFolder, contentMode, inputContent) {
 		// this._contentFolder = "./content/mediaFiles";
 		// this._imagesFolder = "./content/images";
 		this._contentFolder = contentFolder;
 		this._imagesFolder = imagesFolder;
+		this._content=[];
 		console.log("Loading Files");
 		//if it is set to load the entire folder
 		if (contentMode == 1) {
@@ -44,11 +52,13 @@ class Content {
 			});
 			//look through the settings json for content
 		} else {
-			settings.videoContent.forEach(vcRecord => {
+			inputContent.forEach(vcRecord => {
 				if (!fs.existsSync(this._imagesFolder + "/" + vcRecord["thumbnail"])) {
+					//console.log(vcRecord);
 					this.createThumbnail(vcRecord["videoName"]);
 				}
 			});
+			this._content = inputContent;
 		}
 	}
 	createThumbnail(input) {
@@ -61,18 +71,19 @@ class Content {
 				size: '1000x?',
 				every_n_percentage: 10,
 			}, function (error, files) {
-				if (!error)
+				if (!error){
 					console.log('ffmpeg: ' + files);
-				var imgfilename = path.basename(files);
-				jimp.read(imgfld + "/temp/" + imgfilename, function (err, img) {
-					if (err) throw err;
-					img.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)
-						.quality(100)
-						.write(imgfld + "/" + imgfilename);
-					console.log("Cropped: " + imgfld + "/" + imgfilename);
-					fs.unlink(imgfld + "/temp/" + imgfilename);
-					var tempjson = {};
-				});
+					files.forEach(ffile=>{
+						var imgfilename = path.basename(ffile);
+						jimp.read(imgfld + "/temp/" + imgfilename, function (err, img) {
+							if (err) throw err;
+							img.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)
+								.quality(100)
+								.write(imgfld + "/" + imgfilename);
+							console.log("Cropped: " + imgfld + "/" + imgfilename);
+						});
+					});
+				}
 			});
 		}, function (err) {
 			console.log('Error: ' + err);
@@ -95,6 +106,36 @@ app.use('/oscTest', function (req, res, next) {
 	console.log("Test OSC sent");
 	res.end("osc sent successfully");
 
+});
+
+//video content
+app.use("/videoContent",function(req,res,next){
+	//get int from url or post
+	var input = 0;
+	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
+	client.send("/video",content._content[input].videoName,function(){
+		console.log("Sent Video " + content._content.videoName);
+		client.kill();
+	});
+});
+
+//photo content
+app.use("/photoSwitch",function(req,res,next){
+
+});
+
+//websocket photosphere
+
+
+
+//gaming content
+app.use("/gamingToggle",function(req,res,next){
+	gamingContent = !gamingContent;
+	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
+	client.send("/spout",content._content[input].videoName,function(){
+		console.log("Set gaming to " + gamingContent);
+		client.kill();
+	});
 });
 
 

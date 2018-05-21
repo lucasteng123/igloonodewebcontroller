@@ -4,7 +4,7 @@
     "httpServerPort":3000,
     "mediaFiles":"./content/mediaFiles",
     "imagesFolder":"./content/images",
-    "contentMode":0, //1=folder mode, 0=preset mode,
+    "contentMode":0, 
     "videoContent":[
         {
             "videoName":"LogoLoop.mp4",
