@@ -11,6 +11,7 @@ var fs = require("fs");
 var path = require("path");
 
 var util = require('util');
+var Utility = require('./utilities.js');
 
 var gamingContent = false;
 
@@ -88,13 +89,14 @@ contentRouter.route("/photoRotate/:pos/:L/:H").get(function(req,res){
 	var pos = parseFloat(req.params.pos);
 	var rangeL = parseFloat(req.params.L);
 	var rangeH = parseFloat(req.params.H);
-	var mapped = utilFloatMap(pos,rangeL,rangeH,-1,1);
+	var mapped = Utility.FloatMap(pos,rangeL,rangeH,-1,1);
 	client.send("/image/tilt/amount",mapped,function(){
 		client.kill();
 	});
 	console.log(typeof(mapped) + ": "+ mapped);
 	res.end(mapped.toString());
 });
+
 contentRouter.route("photoContent/:photoID").get(function(req,res){
 	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
 	client.send("/mov/play",req.params.photoID,function(){
@@ -122,8 +124,6 @@ http.createServer(app).listen(settings.httpServerPort);
 console.log("http server started at port " + settings.httpServerPort);
 console.log("OSC sending to " + settings.warpServerIP + ":" + settings.warpServerPort);
 
-function utilFloatMap(val,low1,high1,low2,high2){
-	return (low2 + (val - low1) * (high2 - low2) / (high1 - low1));
-}
+
 
 //lucas
