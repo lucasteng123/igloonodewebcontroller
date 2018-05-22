@@ -16,12 +16,6 @@ var Utility = require('./utilities.js');
 var gamingContent = false;
 
 var Content = require ('./Content.js');
-
-//image manipulation
-var ffmpeg = require('ffmpeg');
-var jimp = require('jimp');
-//globals
-
 //JSON imports
 var settings = require("./content/json/settings");
 
@@ -110,6 +104,7 @@ contentRouter.route("/photoContent/:photoID").get(function(req,res){
 	});
 	res.end("Switched to Photo " + req.params.photoID);
 });
+
 
 contentRouter.route("/resetSources")
 	.get(function(req,res){
