@@ -6,8 +6,6 @@ var jimp = require('jimp');
 
 module.exports = class Content {
 	constructor(contentFolder, imagesFolder, contentMode, inputContent, inputImgContent) {
-		// this._contentFolder = "./content/mediaFiles";
-		// this._imagesFolder = "./content/images";
 		this._contentFolder = contentFolder;
 		this._imagesFolder = imagesFolder;
 		this._content=[];
@@ -28,7 +26,7 @@ module.exports = class Content {
 				}
             }
             
-            
+            //look for all of the photospheres
 			for(var i = 0, max = inputImgContent.length; i<max; i++){
 				if(!fs.existsSync(this._imagesFolder + "/" + inputImgContent[i]["thumbnail"])){
                     this.createThumbnailFromImage(inputImgContent[i]["photoName"],inputImgContent[i]["thumbnail"]);
