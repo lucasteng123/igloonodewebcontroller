@@ -4,6 +4,8 @@
     "httpServerPort":3000,
     "mediaFiles":"./content/mediaFiles",
     "imagesFolder":"./content/images",
+    "unityAppName":"VRApp",
+    "capturename":"IglooWeb",
     "contentMode":0, 
     "videoContent":[
         {

@@ -37,6 +37,20 @@ UI
 */
 
 var content = new Content(settings.mediaFiles, settings.imagesFolder, settings.contentMode, settings.videoContent, settings.stillContent);
+function selectSources(){
+	//select unity & web
+	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
+	client.send("/externalApplication/selected",settings.unityAppName,function(){
+		console.log("Selected unity");
+	});
+	
+	client.send("/capture/selected",settings.capturename,function(){
+		console.log("Selected web");
+	});
+}
+
+selectSources();
+
 
 //testing of OSC
 app.use('/oscTest', function (req, res, next) {
@@ -52,16 +66,7 @@ app.use('/oscTest', function (req, res, next) {
 
 });
 
-//video content
-app.use("/videoContent",function(req,res,next){
-	//get int from url or post
-	var input = 0;
-	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
-	client.send("/video",content._content[input].videoName,function(){
-		console.log("Sent Video " + content._content.videoName);
-		client.kill();
-	});
-});
+
 
 
 //gaming content
@@ -97,7 +102,7 @@ contentRouter.route("/photoRotate/:pos/:L/:H").get(function(req,res){
 	res.end(mapped.toString());
 });
 
-contentRouter.route("photoContent/:photoID").get(function(req,res){
+contentRouter.route("/photoContent/:photoID").get(function(req,res){
 	var client = new osc.Client(settings.warpServerIP,settings.warpServerPort);
 	client.send("/mov/play",req.params.photoID,function(){
 		console.log("Sent Photo " + req.params.photoID);
@@ -105,6 +110,12 @@ contentRouter.route("photoContent/:photoID").get(function(req,res){
 	});
 	res.end("Switched to Photo " + req.params.photoID);
 });
+
+contentRouter.route("/resetSources")
+	.get(function(req,res){
+		selectSources();
+		res.end("reset sources");
+	});
 
 //setup api
 app.use("/api",contentRouter);
@@ -123,7 +134,5 @@ app.use(function onerror(err, req, res, next) {
 http.createServer(app).listen(settings.httpServerPort);
 console.log("http server started at port " + settings.httpServerPort);
 console.log("OSC sending to " + settings.warpServerIP + ":" + settings.warpServerPort);
-
-
 
 //lucas
