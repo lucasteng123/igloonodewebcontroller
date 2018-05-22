@@ -15,5 +15,11 @@
             "thumbnail":"LogoLoop2.jpg"
         }
 
+    ],
+    "stillContent":[
+        {
+            "photoName":"photosphere1.jpg",
+            "thumbnail":"photosphere1.jpg"
+        }
     ]
 }
