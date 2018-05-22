@@ -26,12 +26,15 @@ module.exports = class Content {
 					//console.log(vcRecord);
 					this.createThumbnail(inputContent[i]["videoName"],inputContent[i]["thumbnail"]);
 				}
-			}
-			inputImgContent.forEach(function(inimg){
-				if(!fs.existsSync(this._imagesFolder + "/" + inimg["thumbnail"])){
-					this.createThumbnail(inimg["photoName"],inimg["thumbnail"]);
+            }
+            
+            
+			for(var i = 0, max = inputImgContent.length; i<max; i++){
+				if(!fs.existsSync(this._imagesFolder + "/" + inputImgContent[i]["thumbnail"])){
+                    this.createThumbnailFromImage(inputImgContent[i]["photoName"],inputImgContent[i]["thumbnail"]);
+                    console.log("found photosphere");
 				}
-			});
+			}
 			this._content = inputContent;
 			this._stillContent = inputImgContent;
 		}
@@ -66,12 +69,18 @@ module.exports = class Content {
 	}
 
 	createThumbnailFromImage(input,output){
-		jimp.read(this._content+"/"+input, function(err,img){
+        var imgfld = this._imagesFolder;
+        console.log("processing photosphere thumbnail");
+		jimp.read(this._contentFolder+"/"+input, function(err,img){
 			if(err) throw err;
 			img.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)
 								.quality(100)
-								.write(this._imagesFolder + "/" + output);
-		})
+                                .write(imgfld + "/" + output);
+            console.log("created photosphere thumb");
+        })
+        
 		
 	}
 }
+
+//lucas

@@ -16,8 +16,6 @@ var gamingContent = false;
 
 var Content = require ('./Content.js');
 
-
-
 //image manipulation
 var ffmpeg = require('ffmpeg');
 var jimp = require('jimp');
